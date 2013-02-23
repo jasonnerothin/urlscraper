@@ -32,7 +32,6 @@ class PageTest < ActiveSupport::TestCase
     (0..15).each do @instance.push random_word_count end
     assert_equal( 10, @instance.words.size )
 
-
     puts @instance.to_json
 
   end
@@ -58,16 +57,45 @@ class PageTest < ActiveSupport::TestCase
 
   def test_most_common_word
 
-    me = WordCount.new("jason",38)
-
-    @instance.push WordCount.new("shelley", 37)
-    @instance.push me
-    @instance.push WordCount.new("elida",7)
-    @instance.push WordCount.new("ruby",5)
-    @instance.push WordCount.new("peter",2)
+    me = push_my_family 0
 
     assert_same(@instance.most_common_word, me, "I should be the most common since I'm 38.")
 
+  end
+
+  def push_my_family( idx )
+
+    jpn = WordCount.new("jason",38)
+    smn = WordCount.new("shelley", 37)
+    emn = WordCount.new("elida",7)
+    rpn = WordCount.new("ruby",5)
+    pdn = WordCount.new("peter",2)
+
+    @instance.push smn
+    @instance.push jpn
+    @instance.push emn
+    @instance.push rpn
+    @instance.push pdn
+
+    [jpn,smn,emn,rpn,pdn][idx]
+
+  end
+
+  def test_least_common
+
+    pete = push_my_family 4
+
+    assert_same(@instance.least_common, pete, "Pete's the least.")
+
+  end
+
+  def test_delete_least_common
+
+    ruby = push_my_family 3
+
+    @instance.delete_least_common
+
+    assert_same(@instance.least_common, ruby)
 
   end
 
