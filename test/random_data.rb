@@ -5,7 +5,7 @@ class RandomDataHelper
   def random_string(len = 10)
     str = ""
     (1..len).each { |i|
-      ch = random_char i % 2 == 0 # alternate case to make it look "testy"
+      ch = random_char i.even? # alternate case to make it look "testy"
       str = str + ch
     }
     str
