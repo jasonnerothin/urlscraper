@@ -1,0 +1,6 @@
+<% if @id.nil? %>
+<h3>Page id required, but not supplied.</h3>
+<% else %>
+<h3>Id '<%= @id %>' does not correspond to a Page in our system.</h3>
+<% end %>
+<%= link_to :Index, '/' %>
