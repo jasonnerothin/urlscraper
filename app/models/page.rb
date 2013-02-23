@@ -4,23 +4,30 @@ require "json"
 # A webpage is a quite obvious example.
 class Page < ActiveRecord::Base
 
-  # ctor
-  def initialize(url)
-    raise("Cannot initialize a page instance without a URL.") if url.nil?
-    @words = Set.new
-    @url = url
-  end
-
-  # little accessor method
   def words
-    @words
+    if @words.nil?
+      Set.new()
+    else
+      @words
+    end
   end
 
-  # serialize as json
+  def url
+    @url
+  end
+
+  def json
+    to_json
+  end
+
   def to_json(*a)
+    if @words.nil?
+      @words = Set.new()
+    end
     {
-        "url" => @url,
-        "words" =>
+        :id => id,
+        :url => @url,
+        :words =>
             @words.sort.each do |word|
               word.to_json
             end
@@ -29,7 +36,7 @@ class Page < ActiveRecord::Base
 
   # deserialize as json
   def self.json_create(o)
-    new(o["data"]["url"], o["data"]["words"])
+    new(o[:data][:url], o[:data][:words], o[:data][:id])
   end
 
   # Attempt to push a new WordCount into the set.
@@ -44,6 +51,9 @@ class Page < ActiveRecord::Base
   # the uncommon words are implicitly the ones we're
   # disinterested in.
   def push(word)
+    if @words.nil?
+      @words = Set.new()
+    end
     if @words.length < 10
       @words.add(word)
     else # 10 words already

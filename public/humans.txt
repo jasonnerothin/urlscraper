@@ -1,0 +1,11 @@
+/* TEAM */
+	Chef:Jason Nerothin
+	Contact:jasonnerothin [at] gmail.com
+	Twitter:@jasonnerothin
+	From:Scandia, Minnesota, USA
+
+/* SITE */
+	Last update:2013/02/22
+	Language:English
+	Doctype:HTML5
+	IDE:vim, IntelliJ Idea

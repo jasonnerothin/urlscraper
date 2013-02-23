@@ -10,7 +10,13 @@ class PageTest < ActiveSupport::TestCase
     @w2 = WordCount.new("wubble", 3999)
     @w3 = WordCount.new("flob", 100000)
 
-    @instance = Page.new("http://jasonnerothin.com")
+    @instance = Page.new()
+    @instance[:url] = "http://jasonnerothin.com"
+    @instance.save()
+  end
+
+  def teardown
+    @instance.delete()
   end
 
   def test_to_json
@@ -59,7 +65,7 @@ class PageTest < ActiveSupport::TestCase
 
     me = push_my_family 0
 
-    assert_same(@instance.most_common_word, me, "I should be the most common since I'm 38.")
+    assert_same @instance.most_common_word, me, "I should be the most common since I'm 38."
 
   end
 
@@ -96,6 +102,17 @@ class PageTest < ActiveSupport::TestCase
     @instance.delete_least_common
 
     assert_same(@instance.least_common, ruby)
+
+  end
+
+  def test_find_by_id
+
+    actual = Page.find 1
+
+    assert_not_nil actual
+    assert_equal 'http://jasonnerothin.com/app/index.html', actual[:url]
+    assert_equal 1, actual[:id]
+    assert_equal Set.new(), actual.words()
 
   end
 

@@ -16,6 +16,7 @@ class PageProcessorTest < Test::Unit::TestCase
   end
 
   def test_replace_tags
+
     str = "<xml>fun<x>as</x><y><z>a </z><w>barrel </w></y>full of monkeys</xml>"
 
     actual = @instance.replace_tags str

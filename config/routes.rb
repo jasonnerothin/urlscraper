@@ -1,4 +1,15 @@
 Urlscraper::Application.routes.draw do
+
+  root :to => "page#index"
+
+  #resources :pages
+
+  get "page/detail"
+
+  get "page/form"
+
+  get "page/index"
+
   # The priority is based upon order of creation:
   # first created -> highest priority.
 

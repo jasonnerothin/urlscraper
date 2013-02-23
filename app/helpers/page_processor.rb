@@ -1,7 +1,6 @@
 # A bunch of methods for html and string munging.
 class PageProcessor
 
-  # ctor
   def initialize
     @delimiters = %W{. \n \t / \\ : ; ? - ~ ( ) [ ] { } " _ = + ^ % $ @ ! 1 2 3 4 5 6 7 8 9 0}
   end
@@ -24,7 +23,7 @@ class PageProcessor
       ps1 = ps0
     end
     ps1.strip! unless ps1.nil?
-  else
+  # else
     ps0
   end
 
