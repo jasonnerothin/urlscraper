@@ -1,8 +1,10 @@
+#require "action_controller/vendor/html-scanner"
+
 # A bunch of methods for html and string munging.
 class PageProcessor
 
   def initialize
-    @delimiters = %W{. \n \t / \\ : ; ? - ~ ( ) [ ] { } " _ = + ^ % $ @ ! 1 2 3 4 5 6 7 8 9 0}
+    @delimiters = %W{. \n \t / \\ : ; , ? - ~ ( ) [ ] { } " _ = + ^ % $ @ ! 1 2 3 4 5 6 7 8 9 0}
   end
 
   # replaces common delimiters with single spaces
@@ -30,7 +32,8 @@ class PageProcessor
   # replaces html tags, endlines, and tabs (or xml for that matter) with single spaces
   def replace_tags(page_source)
     raise("Error: empty page source!") if page_source.nil? || page_source.empty?
-    ps0 = page_source.gsub!(/(<[^>]*>)|\n|\t/s) { " " }
+    #helper = new
+    ps0 = HTML::FullSanitizer.new.sanitize(page_source) #.gsub!(/(<[^>]*>)|\n|\t/s) { " " }
     strip_consecutive_spaces(ps0)
   end
 

@@ -125,8 +125,9 @@ class Page < ActiveRecord::Base
   # returns a map from word to count
   def map_words_on_page
     fetcher = FetchUrl.new
-    processor = PageProcessor.new
     page_content = fetcher.fetch(self[:url]).body
+
+    processor = PageProcessor.new
     processor.process_page page_content
   end
 
