@@ -10,11 +10,18 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130223045948) do
+ActiveRecord::Schema.define(:version => 20130224223720) do
 
   create_table "pages", :force => true do |t|
-    t.string   "url"
-    t.text     "json"
+    t.string   "url",        :default => ""
+    t.datetime "created_at",                 :null => false
+    t.datetime "updated_at",                 :null => false
+  end
+
+  create_table "word_counts", :force => true do |t|
+    t.string   "word"
+    t.integer  "count"
+    t.integer  "page_id"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
   end

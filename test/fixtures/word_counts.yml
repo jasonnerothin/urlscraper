@@ -1,0 +1,16 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  word: uno
+  count: 1
+  page_id: 2
+
+two:
+  word: dos
+  count: 2
+  page_id: 2
+
+three:
+  word: tres
+  count: 3
+  page_id: 2

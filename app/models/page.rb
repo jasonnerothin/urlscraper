@@ -1,42 +1,20 @@
 require "json"
 
 # A model class that keeps track of word counts for a text resource mapped by a URL.
-# A webpage is a quite obvious example.
+# A web page is a quite obvious example.
 class Page < ActiveRecord::Base
 
-  def words
-    if @words.nil?
-      Set.new()
-    else
-      @words
-    end
+  attr_accessible @url, @word_counts
+
+  has_many :word_counts
+
+  def word_counts
+    init_word_counts
+    @word_counts
   end
 
-  def url
-    @url
-  end
-
-  def json
-    to_json
-  end
-
-  def to_json(*a)
-    if @words.nil?
-      @words = Set.new()
-    end
-    {
-        :id => id,
-        :url => @url,
-        :words =>
-            @words.sort.each do |word|
-              word.to_json
-            end
-    }.to_json(*a)
-  end
-
-  # deserialize as json
-  def self.json_create(o)
-    new(o[:data][:url], o[:data][:words], o[:data][:id])
+  def after_initialize
+    init_word_counts
   end
 
   # Attempt to push a new WordCount into the set.
@@ -51,38 +29,36 @@ class Page < ActiveRecord::Base
   # the uncommon words are implicitly the ones we're
   # disinterested in.
   def push(word)
-    if @words.nil?
-      @words = Set.new()
-    end
-    if @words.length < 10
-      @words.add(word)
-    else # 10 words already
-      unless least_common.nil?
-        if word.count > least_common.count
+    init_word_counts
+    if self.word_counts.size < 10
+      self.word_counts << word
+    else # 10 words already TODO this looks wrong - test it
+      unless least_common_word.nil?
+        if word[:count] > least_common_word[:count]
           delete_least_common
-          @words.add(word)
+          self.word_counts << word
         end
       end
     end
-    @words.sort
+    #@words.sort # don't want to take the performance hit for large pages
   end
 
   # the most common word we are keeping track of
   def most_common_word
-    if @words.size == 0
+    if word_counts.size == 0
       ""
     else
-      @words.sort.to_a[0]
+      word_counts.sort.to_a[0]
     end
   end
 
   # returns the least common word count
   # or nil if there are no recorded words
   # yet
-  def least_common
-    sz = @words.size
+  def least_common_word
+    sz = word_counts.size
     if sz > 0
-      @words.sort.to_a[sz-1]
+      word_counts.sort.to_a[sz-1]
     else
       nil
     end
@@ -90,61 +66,103 @@ class Page < ActiveRecord::Base
 
   # deletes the least common word in the set
   def delete_least_common
-    lc = least_common
-    @words.delete(lc) unless lc.nil?
+    lc = least_common_word
+    @word_counts.delete(lc) unless lc.nil?
   end
 
-end
-
-# a little immutable helper class
-class WordCount
-
-  include Comparable
-
-  # ctor
-  def initialize(word, count)
-    raise("Word and count are required attributes of a WordCount object.") if word.nil? || count.nil?
-    raise("Count must be greater than zero.") unless count > 0
-    @word = word
-    @count = count
+  def from_json(json_str)
+    @url = json_str[:url]
+    @id = json_str[:id]
+    @word_counts = json_str[:word_counts]
   end
 
-  # serialization to json
-  def to_json(*a)
-    {
-        "word" => @word,
-        "count" => @count
-    }.to_json(*a)
+  "" "def valid?
+
+    valid = true
+    return valid
+    if empty_url
+      errors.add :url, 'Non-empty URL required.'
+      valid = false
+    end
+    unless link_is_good
+      errors.add :url, 'Invalid URL (unreachable or redirect)'
+      valid = false
+    end
+    unless protocol_is_good
+      errors.add :url, 'http: is the only protocol currently supported by this application. Please start your URL with 'http://'.'
+      valid = false
+    end
+    if matching_url
+      errors.add :url, 'The web page at #self[:url] has already been processed.'
+      valid = false
+    end
+    unless json_is_good
+      errors.add :json, 'Word counts have not been serialized to json yet. Please call init_json.'
+      valid = false
+    end
+    valid
   end
 
-  # from json
-  def self.json_create(o)
-    new(o["data"]["word"], o["data"]["count"])
-  end
+  def invalid?
+    !valid?
+  end" ""
 
-  # make our word counts comparable
-  def <=>(other)
-    result = other.count <=> self.count
-    if result != 0
-      result
+  private
+
+  def json_is_good
+    my_json = self[:json]
+    if my_json.nil?
+      false
+    elsif my_json.strip.empty?
+      false
     else
-      self.word <=> other.word
+      true
     end
   end
 
-  # convenience accessor
-  def word
-    @word
+  def protocol_is_good
+    url = self[:url]
+    if url.nil?
+      false
+    elsif url.strip.starts_with?("http:")
+      true
+    else
+      false
+    end
   end
 
-  # so we can look and touch
-  def count
-    @count
+  def link_is_good
+    begin
+      FetchUrl.new().check_link self[:url]
+    rescue
+      false
+    end
   end
 
-  # for IDE giggles
-  def inspect
-    "Word: #{@word}, Count: #{@count}"
+  def matching_url
+    val = Page.find_by_url self[:url]
+    if val.nil?
+      false
+    else
+      val.any? != nil
+    end
+  end
+
+  def empty_url
+    url = self[:url]
+    if url.nil?
+      true
+    elsif url.strip.length == 0
+      true
+    else
+      false
+    end
+  end
+
+  def init_word_counts
+    if @word_counts.nil?
+      @word_counts = Set.new
+    end
   end
 
 end

@@ -1,0 +1,17 @@
+<label for="url">URL:</label><span id="url"><%= @page[:url] %></span>
+<dl>
+<dt>Word counts:</dt>
+<% cnt = 0
+   @page.word_counts().each do |wc|
+%>
+      <dd>
+          <label for="word<%= cnt %>">word:</label><span class="word" id="word<%= cnt %>"><%= wc.word  %></span>
+          <label for="count<%= cnt %>">count:</label><span class="count" id="count<%= cnt %>"><%= wc.count %></span>
+      </dd>
+<%
+    end
+    if @page.word_counts().nil? || @page.word_counts().empty?
+%>
+      <dd><span class="word" id="no_words">No words!</span></dd>
+<% end %>
+</dl>

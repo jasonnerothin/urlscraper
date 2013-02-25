@@ -5,22 +5,103 @@ class PageTest < ActiveSupport::TestCase
 
   def setup
     @rand = RandomDataHelper.new()
-    @w0 = WordCount.new("wobble", 18)
-    @w1 = WordCount.new("wibble", 29)
-    @w2 = WordCount.new("wubble", 3999)
-    @w3 = WordCount.new("flob", 100000)
 
-    @instance = Page.new()
-    @instance[:url] = "http://jasonnerothin.com"
-    @instance.save()
+    @instance = Page.new
+    @instance[:url] = "http://jasonnerothin.com/app/index.html"
+    #@instance[:word_counts] = Set.new
+    assert_equal true, @instance.save
+
+    @w0 = WordCount.new(:word=>"wobble", :count=>18, :page_id=>@instance.id)
+    assert_equal true, @w0.save
+
+    @w1 = WordCount.new(:word=>"wibble", :count=>29, :page_id=>@instance.id)
+    assert_equal true, @w1.save
+
+    @w2 = WordCount.new(:word=>"wubble", :count=>3999, :page_id=>@instance.id)
+    assert_equal true, @w2.save
+
+    @w3 = WordCount.new(:word=>"flob", :count=>100000, :page_id=>@instance.id)
+    assert_equal true, @w3.save
+
   end
 
   def teardown
-    @instance.delete()
+    #@instance.destroy
+    #@w0.destroy
+    #@w1.destroy
+    #@w2.destroy
+    #@w3.destroy
   end
 
-  def test_to_json
-    puts @instance.to_json
+  test "to_json doesn't just blow up" do
+    some_json = @instance.to_json
+  end
+
+  #test "valid? and invalid? work correctly" do
+  #  page = Page.new
+  #
+  #  page.url = nil
+  #  assert_equal false, page.valid?
+  #  assert_equal true, page.invalid?
+  #  required = 'URL required'
+  #  has_error page, required
+  #
+  #  page.url = ''
+  #  assert_equal false, page.valid?
+  #  assert_equal true, page.invalid?
+  #  has_error page, required
+  #
+  #  page.url = ' '
+  #  assert_equal false, page.valid?
+  #  assert_equal true, page.invalid?
+  #  has_error page, required
+  #
+  #  page.url = "http://jasonnerothin.com/"
+  #  assert_equal false, page.valid?
+  #  assert_equal true, page.invalid?
+  #  invalid = 'Invalid URL'
+  #  has_error page, invalid
+  #
+  #  page.url = "gopher://foo.bar.gov/"
+  #  assert_equal false, page.valid?
+  #  assert_equal true, page.invalid?
+  #  has_error page, "http: is the only protocol"
+  #
+  #  page.url = 'http://news.google.com'
+  #  lacks_error page, invalid
+  #
+  #  json_msg = 'serialized to json'
+  #  assert_equal false, page.valid?
+  #  assert_equal true, page.invalid?
+  #  has_error page, json_msg
+  #
+  #  wc = WordCount.new 'blarney', 234
+  #  page.push wc
+  #  assert_equal false, page.valid?
+  #  assert_equal true, page.invalid?
+  #  has_error page, json_msg
+  #
+  #  page.init_json
+  #  assert_equal true, page.valid?
+  #  assert_equal false, page.invalid?
+  #  lacks_error page, json_msg
+  #
+  #end
+
+  def has_error( page, msg )
+    found = false
+    page.errors.full_messages.each do |fm|
+      unless fm.nil?
+        if fm.to_s =~ /msg.to_s/
+          found = true
+        end
+      end
+    end
+    found
+  end
+
+  def lacks_error( page, msg )
+    !has_error page, msg
   end
 
   def test_push
@@ -30,33 +111,39 @@ class PageTest < ActiveSupport::TestCase
     @instance.push @w1
 
     # ensure that we can't re-add the same word
-    size = @instance.words.size
+    size = @instance.word_counts.size
     @instance.push @w0
-    assert_equal size, @instance.words.size
+    assert_equal size, @instance.word_counts.size
 
     # ensure that we max out at 10 no matter how hard we try
     (0..15).each do @instance.push random_word_count end
-    assert_equal( 10, @instance.words.size )
+    assert_equal( 10, @instance.word_counts.size )
 
     puts @instance.to_json
 
   end
 
   def random_word_count
-    WordCount.new(@rand.random_string, rand(23) + 1)
+    WordCount.new(:word=>@rand.random_string, :count=>rand(23) + 1, :page_id=>@instance.id)
   end
 
   # sorts by count (ascending) and then by word (asciibetically)
   def test_word_count_sort
 
-    a = WordCount.new("a", 1)
-    b = WordCount.new("b", 1)
-    c = WordCount.new("c", 23)
+    pg = Page.new
+    pg[:url] = 'http://techmeme.com'
+    assert_equal true, pg.save
+    a = WordCount.new(:word=>"a", :count=>1, :page_id=>pg.id)
+    assert_equal true, a.save
+    b = WordCount.new(:word=>"b", :count=>1, :page_id=>pg.id)
+    assert_equal true, b.save
+    c = WordCount.new(:word=>"c", :count=>23, :page_id=>pg.id)
+    assert_equal true, c.save
 
-    arr = [a,b, c].sort
+    arr = [a,b,c].sort
 
     assert_same(arr[0],c)
-    assert_same(arr[1],a)
+    assert_same(arr[1],a) # sorts first by count, THEN by word
     assert_same(arr[2],b)
 
   end
@@ -71,11 +158,13 @@ class PageTest < ActiveSupport::TestCase
 
   def push_my_family( idx )
 
-    jpn = WordCount.new("jason",38)
-    smn = WordCount.new("shelley", 37)
-    emn = WordCount.new("elida",7)
-    rpn = WordCount.new("ruby",5)
-    pdn = WordCount.new("peter",2)
+    jpn = WordCount.new(:word=>"jason", :count=>38, :page_id=>@instance.id)
+    smn = WordCount.new(:word=>"shelley", :count=> 37, :page_id=>@instance.id)
+    emn = WordCount.new(:word=>"elida", :count=>7, :page_id=>@instance.id)
+    rpn = WordCount.new(:word=>"ruby", :count=>5, :page_id=>@instance.id)
+    pdn = WordCount.new(:word=>"peter", :count=>2, :page_id=>@instance.id)
+
+    assert_equal true, jpn.save & smn.save & emn.save & rpn.save & pdn.save
 
     @instance.push smn
     @instance.push jpn
@@ -91,7 +180,7 @@ class PageTest < ActiveSupport::TestCase
 
     pete = push_my_family 4
 
-    assert_same(@instance.least_common, pete, "Pete's the least.")
+    assert_same(@instance.least_common_word, pete, "Pete's the least.")
 
   end
 
@@ -101,7 +190,7 @@ class PageTest < ActiveSupport::TestCase
 
     @instance.delete_least_common
 
-    assert_same(@instance.least_common, ruby)
+    assert_same(@instance.least_common_word, ruby)
 
   end
 
@@ -112,7 +201,7 @@ class PageTest < ActiveSupport::TestCase
     assert_not_nil actual
     assert_equal 'http://jasonnerothin.com/app/index.html', actual[:url]
     assert_equal 1, actual[:id]
-    assert_equal Set.new(), actual.words()
+    assert_equal Set.new(), actual.word_counts()
 
   end
 

@@ -1,18 +1,18 @@
-<h1>Page#index</h1>
-<p>Find me in app/views/page/index.html.erb</p>
-
-
-<!-- DOCTYPE html>
-<html>
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
 <head>
-    <title>Urlscraper</title>
-    < %= stylesheet_link_tag    "application", :media => "all" %>
-    < %= javascript_include_tag "application" %>
-    < %= csrf_meta_tags %>
+    <title>Url Word Counter</title>
+    <%= stylesheet_link_tag "page", :media => "all" %>
+    <%= javascript_include_tag "page" %>
+    <%= csrf_meta_tags %>
 </head>
 <body>
 
-< %= yield %>
+<h2>Url Word Counter</h2>
+<%= link_to "Add new URL", :controller => :page, :action => :new %>
 
 </body>
-</html-->
+</html>

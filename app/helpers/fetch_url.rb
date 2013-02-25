@@ -9,4 +9,16 @@ class FetchUrl
     Net::HTTP.get_response(URI.parse(url))
   end
 
+  # checks that a url is reachable and has a
+  # successful (and non-empty) response code
+  def check_link(url)
+    begin
+      response = fetch(url)
+      code = Integer(response.code)
+      code > 199 && code < 300 && code != 204
+    rescue
+      false
+    end
+  end
+
 end

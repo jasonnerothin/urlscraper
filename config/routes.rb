@@ -2,13 +2,13 @@ Urlscraper::Application.routes.draw do
 
   root :to => "page#index"
 
-  #resources :pages
-
-  get "page/detail"
-
-  get "page/form"
-
-  get "page/index"
+  resources :page do
+    get "show"
+    get "new"
+    get "index"
+    post "create"
+    get "noresult"
+  end
 
   # The priority is based upon order of creation:
   # first created -> highest priority.
