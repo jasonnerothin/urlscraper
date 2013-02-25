@@ -8,6 +8,10 @@ class PageController < ApplicationController
     @pages.each do |pg|
       pg.destroy
     end
+    @wc = WordCount.all
+    @wc.each do |wc|
+      wc.destroy
+    end
     render 'page/all-gone'
   end
 
