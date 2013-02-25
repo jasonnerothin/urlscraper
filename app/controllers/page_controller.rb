@@ -21,7 +21,7 @@ class PageController < ApplicationController
     @page = Page.new
     @page.created_at = DateTime.now
     @page.updated_at = DateTime.now
-    @page.url ||= 'http://' # save the user the hassle
+    @page[:url] = 'http://' # save the user the hassle
     respond_to do |format|
       begin
         if @page.save(:validate => false) # want to skip url validation
