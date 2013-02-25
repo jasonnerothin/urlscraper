@@ -4,18 +4,17 @@ require "json"
 # A web page is a quite obvious example.
 class Page < ActiveRecord::Base
 
-  attr_accessible @url, @word_counts
+  attr_accessible :url, :word_counts
 
   has_many :word_counts
 
   def word_counts
-    init_word_counts
-    @word_counts
+    self[:word_counts] ||= Set.new
   end
 
   def after_initialize
     init_word_counts
-    @url = ''
+    self[:url] = 'http://'
   end
 
   validates :url, :presence => true
@@ -35,7 +34,7 @@ class Page < ActiveRecord::Base
   # the uncommon words are implicitly the ones we're
   # disinterested in.
   def push(word)
-    init_word_counts
+    self[:word_counts] ||= Set.new
     if self.word_counts.size < 10
       self.word_counts << word
     else # 10 words already TODO this looks wrong - test it
@@ -46,7 +45,7 @@ class Page < ActiveRecord::Base
         end
       end
     end
-    #@words.sort # don't want to take the performance hit for large pages
+    #@word_counts.sort # don't want to take the performance hit for large pages
   end
 
   # the most common word we are keeping track of
@@ -101,7 +100,7 @@ class Page < ActiveRecord::Base
   # public only for testing
   def delete_least_common
     lc = least_common_word
-    @word_counts.delete(lc) unless lc.nil?
+    self[:word_counts].delete(lc) unless lc.nil?
   end
 
   private
@@ -112,12 +111,6 @@ class Page < ActiveRecord::Base
     processor = PageProcessor.new
     page_content = fetcher.fetch(self[:url]).body
     processor.process_page page_content
-  end
-
-  def init_word_counts
-    if @word_counts.nil?
-      @word_counts = Set.new
-    end
   end
 
 end

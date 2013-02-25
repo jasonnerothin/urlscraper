@@ -7,7 +7,7 @@ class WordCount < ActiveRecord::Base
   belongs_to :page
 
   # make our word counts comparable
-  def <=>(other)
+  def self.<=>(other)
     result = 0
     if other[:count] < self[:count]
       result = -1
@@ -21,20 +21,8 @@ class WordCount < ActiveRecord::Base
     end
   end
 
-  def inspect
-    "Word: #@word, Count: #@count"
-  end
-
-  def count
-    @count
-  end
-
-  def word
-    @word
-  end
-
-  def page_id
-    @page_id
+  def self.inspect
+    'word: #@word, count: #@count, page_id: #@page_id'
   end
 
 end
