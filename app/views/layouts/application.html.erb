@@ -5,8 +5,9 @@
 <!--[if gt IE 8]><!--><html class="no-js"> <!--<![endif]-->
 <head>
     <title>Url Word Counter</title>
-    <%= stylesheet_link_tag "page", :media => "all" %>
-    <%= javascript_include_tag "page" %>
+    <%= stylesheet_link_tag :page, :media => "all" %>
+    <%= javascript_include_tag :application %>
+    <%= javascript_include_tag :defaults %>
     <%= csrf_meta_tags %>
 </head>
 <body>
