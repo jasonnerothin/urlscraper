@@ -13,7 +13,9 @@ class PageController < ApplicationController
 
   def index
     @pages = Page.all
-    redirect_to 'page#index'
+    respond_to do |format|
+      format.html
+    end
   end
 
   # render a form with a single url on it
@@ -50,10 +52,10 @@ class PageController < ApplicationController
     respond_to do |format|
       begin
         if @page.save_everything # we save off the word counts in this method
-          format.html { render :action => :show, :id => @page.id } # show the details
+          format.html redirect_to page_show_url(:page_id => @page.id)
           format.json { render :json => @page, :status => :created, :location => @page }
         else
-          format.html # light it up the form with error messages { render :action => :update, :page_id => @page.id }
+          format.html redirect_to page_show_url(:page_id => @page.id) # TODO light it up the form with error messages { render :action => :update, :page_id => @page.id }
           format.json { render :json => @page.errors, :status => :unprocessable_entity }
         end
       rescue
@@ -65,7 +67,6 @@ class PageController < ApplicationController
   def not_found
     raise ActionController::RoutingError.new('Not found')
   end
-
 
   # show details about a single page, or
   # redirect to an error page if necessary

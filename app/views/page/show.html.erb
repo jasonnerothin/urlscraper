@@ -1,3 +1,4 @@
+<% if !@page.nil? && !@page[:url].nil? %>
 <label for="url">URL:</label><span id="url"><%= @page[:url] %></span>
 <dl>
 <dt>Word counts:</dt>
@@ -15,3 +16,6 @@
       <dd><span class="word" id="no_words">No words!</span></dd>
 <% end %>
 </dl>
+<% elsif @page[:url].nil? %>
+    Page with id '<%= @page.id %>' has an empty url. <%= link_to "Update here.", page_update_url( :page_id => @page.id ) %>
+<% end %>
