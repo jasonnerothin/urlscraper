@@ -58,6 +58,25 @@ class Page < ActiveRecord::Base
     end
   end
 
+  def save_everything
+    success = true
+    now = DateTime.now
+    self[:updated_at] = now
+    if self.update
+      word_counts.each do | wc |
+        wc[:page_id] = page.id
+        wc[:created_at] = now
+        wc[:updated_at] = now
+        unless wc.save
+          success = false
+        end
+      end unless word_counts.nil?
+    else
+      success = false
+    end
+    success
+  end
+
   def process_url
     map_words_on_page.each do |word, count|
       wc = WordCount.new(:word=>word, :count=>count, :page_id => object_id)

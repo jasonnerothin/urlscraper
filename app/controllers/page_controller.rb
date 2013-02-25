@@ -21,6 +21,7 @@ class PageController < ApplicationController
     @page = Page.new
     @page.created_at = DateTime.now
     @page.updated_at = DateTime.now
+    @page.url ||= 'http://' # save the user the hassle
     respond_to do |format|
       begin
         if @page.save(:validate => false) # want to skip url validation
@@ -29,12 +30,12 @@ class PageController < ApplicationController
         else
           format.html # { redirect_to root } # really should just error
           format.json { render :json => @page, :status => :unprocessable_entity }
-        end
+    end
       rescue
         format.html # todo 500 page
       cat e
         format.html # todo 500 page
-      end
+  end
     end
   end
 
@@ -48,7 +49,7 @@ class PageController < ApplicationController
 
     respond_to do |format|
       begin
-        if save_page @page # we save off the word counts in this method
+        if @page.save_everything # we save off the word counts in this method
           format.html { render :action => :show, :id => @page.id } # show the details
           format.json { render :json => @page, :status => :created, :location => @page }
         else
@@ -65,24 +66,6 @@ class PageController < ApplicationController
     raise ActionController::RoutingError.new('Not found')
   end
 
-  def save_page(page)
-    success = true
-    now = DateTime.now
-    page.updated_at = now
-    if page.update
-      page.word_counts.each do | wc |
-        wc[:page_id] = page.id
-        wc[:created_at] = now
-        wc[:updated_at] = now
-        unless wc.save
-          success = false
-        end
-      end
-    else
-      success = false
-    end
-    success
-  end
 
   # show details about a single page, or
   # redirect to an error page if necessary
