@@ -54,8 +54,8 @@ class Page < ActiveRecord::Base
 
   def process_url
     map_words_on_page.each do |word, count|
-      wc = WordCount.new(:word=>word, :count=>count, :page_id => @page.id)
-      @page.push wc # note no save here, since we only want to keep 10
+      wc = WordCount.new(:word=>word, :count=>count, :page_id => object_id)
+      push wc # note no save here, since we only want to keep 10
     end
   end
 

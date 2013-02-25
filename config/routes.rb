@@ -6,9 +6,9 @@ Urlscraper::Application.routes.draw do
     get "show"
     get "new"
     get "index"
-    post "create"
     get "noresult"
-    delete "annihilate"
+    post "create"
+    post "annihilate"
   end
 
   # The priority is based upon order of creation:

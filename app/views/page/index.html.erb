@@ -1,5 +1,26 @@
+
+<table border="1">
+    <caption>Word Counter Stats</caption>
+    <thead>
+        <tr>
+            <th>webpage</th>
+            <th>most common word</th>
+            <th>occurrences</th>
+        </tr>
+    </thead>
+    <tbody>
+<% @pages.each do |pg| %>
+        <tr>
+            <td><%= link_to pg[:url], pg[:url], :remote=>true, :popup => true %></td>
+            <td><%= pg.most_common_word[:word] %></td>
+            <td><%= pg.most_common_word[:count] %></td>
+        </tr>
+<% end %>
+    </tbody>
+</table>
+
 <fieldset>
-    <legend>Url Word Counter</legend>
-    <%= link_to "Add new URL", :controller => :page, :action => :new %>
-    <!-- %= link_to "Remove all URLs", :controller => :page, :action => :annihilate, :page_id => nil % -->
+    <legend>Word Counter Options</legend>
+    <%= button_to "Add new URL", new_page_url %><br/>
+    <%= button_to "Remove all URLs", page_annihilate_path(:page_id => 0), :method => :post, :confirm => 'Are you sure you want to delete all Page statistics?' %>
 </fieldset>

@@ -51,36 +51,38 @@ class PageController < ApplicationController
     respond_to do |format|
       begin
         if save_page @page # we save off the word counts in this method
-          format.html { redirect_to(@page, :notice => 'Page successfully created.') }
+          format.html { render :action => :show, :id => @page.id } # show the details
           format.json { render :json => @page, :status => :created, :location => @page }
         else
           format.html { render :action => :new }
           format.json { render :json => @page.errors, :status => :unprocessable_entity }
         end
       rescue
-        render :action => :update, :status => :unprocessable_entity, :notice => 'Invalid page: Save attempt failed.'
+        render :action => :not_found
       end
-
     end
+  end
 
+  def not_found
+    raise ActionController::RoutingError.new('Not found')
   end
 
   def save_page(page)
     success = true
     now = DateTime.now
-    @page.updated_at = now
-    if @page.update
-      @page.word_counts.each do | wc |
-        wc[:page_id] = @page.id
+    page.updated_at = now
+    #if page.update
+      page.word_counts.each do | wc |
+        wc[:page_id] = page.id
         wc[:created_at] = now
         wc[:updated_at] = now
         unless wc.save
           success = false
         end
       end
-    else
-      success = false
-    end
+    #else
+    #  success = false
+    #end
     success
   end
 
