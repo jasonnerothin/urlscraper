@@ -5,8 +5,8 @@
    @page.word_counts().each do |wc|
 %>
       <dd>
-          <label for="word<%= cnt %>">word:</label><span class="word" id="word<%= cnt %>"><%= wc.word  %></span>
-          <label for="count<%= cnt %>">count:</label><span class="count" id="count<%= cnt %>"><%= wc.count %></span>
+          <label for="word<%= cnt %>">word:</label><span class="word" id="word<%= cnt %>"><%= wc[:word]  %></span>
+          <label for="count<%= cnt %>">count:</label><span class="count" id="count<%= cnt %>"><%= wc[:count] %></span>
       </dd>
 <%
     end

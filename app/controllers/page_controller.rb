@@ -52,7 +52,7 @@ class PageController < ApplicationController
           format.html { render :action => :show, :id => @page.id } # show the details
           format.json { render :json => @page, :status => :created, :location => @page }
         else
-          format.html { render :action => :new }
+          format.html # light it up the form with error messages { render :action => :update, :page_id => @page.id }
           format.json { render :json => @page.errors, :status => :unprocessable_entity }
         end
       rescue
@@ -69,7 +69,7 @@ class PageController < ApplicationController
     success = true
     now = DateTime.now
     page.updated_at = now
-    #if page.update
+    if page.update
       page.word_counts.each do | wc |
         wc[:page_id] = page.id
         wc[:created_at] = now
@@ -78,33 +78,29 @@ class PageController < ApplicationController
           success = false
         end
       end
-    #else
-    #  success = false
-    #end
+    else
+      success = false
+    end
     success
   end
 
   # show details about a single page, or
   # redirect to an error page if necessary
   def show
-    @done = false # todo i would rather not use a member variable
-    id = params[:id]
-    if id.nil?
-      @done = true
-      render 'page/no-result'
+    success = false
+    id = params[:page_id]
+    @page = Page.find id
+    WordCount.find_all_by_page_id(id).each do |wc|
+      @page.push wc
     end
-
-    begin
-      @page = Page.find id unless @done
-    rescue
-      @done = true
-      render 'page/no-result' unless @done
-    end
-    unless @done
+    success = true
+    if success && !id.nil?
       respond_to do |format|
         format.html # render 'page/show/?id=' + id
         format.json { render :json => @page, :status => :ok, :location => @page }
       end
+    else
+      render 'page/no-result'
     end
   end
 
