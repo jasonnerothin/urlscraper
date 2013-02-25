@@ -44,34 +44,21 @@ class PageController < ApplicationController
   # scrape the url (if valid) and calculate common
   # words on it
   def update
-
     @page = Page.find params[:page][:id]
     @page.url = params[:page][:url]
+    @page.save!
     @page.process_url
-
-    respond_to do |format|
-      begin
-        if @page.save_everything # we save off the word counts in this method
-          format.html redirect_to page_show_url(:page_id => @page.id)
-          format.json { render :json => @page, :status => :created, :location => @page }
-        else
-          format.html redirect_to page_show_url(:page_id => @page.id) # TODO light it up the form with error messages { render :action => :update, :page_id => @page.id }
-          format.json { render :json => @page.errors, :status => :unprocessable_entity }
-        end
-      rescue
-        render :action => :not_found
-      end
-    end
+    render :show
   end
 
   def not_found
     raise ActionController::RoutingError.new('Not found')
   end
 
-  # show details about a single page, or
-  # redirect to an error page if necessary
+  #show details about a single page, or
+  #redirect to an error page if necessary
   def show
-    success = false
+    #success = false
     id = params[:page_id]
     @page = Page.find id
     WordCount.find_all_by_page_id(id).each do |wc|

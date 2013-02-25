@@ -1,21 +1,28 @@
+<h2>Webpage word usage summary</h2>
 <% if !@page.nil? && !@page[:url].nil? %>
-<label for="url">URL:</label><span id="url"><%= @page[:url] %></span>
-<dl>
-<dt>Word counts:</dt>
-<% cnt = 0
-   @page.word_counts().each do |wc|
+<table border="1">
+    <caption>Webpage: <%= @page[:url] %></caption>
+    <thead>
+        <tr>
+            <th>word</th>
+            <th>count</th>
+        </tr>
+    </thead>
+    <tbody>
+<% @page.word_counts.each do |wc| %>
+      <tr>
+          <td class="word"><%= wc[:word]  %></td>
+          <td class="count"><%= wc[:count] %></td>
+      </tr>
+<% end
+   if @page.word_counts.nil? || @page.word_counts.empty?
 %>
-      <dd>
-          <label for="word<%= cnt %>">word:</label><span class="word" id="word<%= cnt %>"><%= wc[:word]  %></span>
-          <label for="count<%= cnt %>">count:</label><span class="count" id="count<%= cnt %>"><%= wc[:count] %></span>
-      </dd>
-<%
-    end
-    if @page.word_counts().nil? || @page.word_counts().empty?
-%>
-      <dd><span class="word" id="no_words">No words!</span></dd>
+        <tr>
+            <td colspan="2">No words found on the page.</td>
+        </tr>
 <% end %>
-</dl>
+    </tbody>
+</table>
 <% elsif @page[:url].nil? %>
     Page with id '<%= @page.id %>' has an empty url. <%= link_to "Update here.", page_update_url( :page_id => @page.id ) %>
 <% end %>
