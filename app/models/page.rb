@@ -4,22 +4,20 @@ require "json"
 # A web page is a quite obvious example.
 class Page < ActiveRecord::Base
 
-  attr_accessible :url, :word_counts
+  attr_accessible :url, :word_counts, :url_reqd_message, :http_message, :already_processed_message
 
   has_many :word_counts
 
-  def word_counts
-    self[:word_counts] ||= Set.new
-  end
-
   def after_initialize
-    init_word_counts
     self[:url] = 'http://'
+    @url_reqd_message = 'URL required'
+    @http_message = "URL must start with 'http://'."
+    @already_processed_message = 'URL %(url) has already been processed.'
   end
 
-  validates :url, :presence => true
-  validates :url, :format => {:with => /^http:\/\/*/, :message => "URL must start with 'http://'."}
-  validates :url, :uniqueness => { :case_sensitive => false, :message => "URL %(url) has already been processed."}
+  validates :url, :presence => { :message =>  @url_reqd_message }
+  validates :url, :format => {:with => /^http:\/\/.*/, :message => @http_message }
+  validates :url, :uniqueness => { :case_sensitive => false, :message => @already_processed_message }
   validates_with UrlChecker
 
   # Attempt to push a new WordCount into the set.
@@ -34,27 +32,22 @@ class Page < ActiveRecord::Base
   # the uncommon words are implicitly the ones we're
   # disinterested in.
   def push(word)
-    self[:word_counts] ||= Set.new
+    #if self.word_counts.size == 10
+    #  x = 23
+    #els
     if self.word_counts.size < 10
-      self.word_counts << word
-    else # 10 words already TODO this looks wrong - test it
+      self.word_counts = ( self.word_counts << word )
+    else # 10 words already
       unless least_common_word.nil?
         if word[:count] > least_common_word[:count]
           delete_least_common
-          self.word_counts << word
+          self.word_counts = ( self.word_counts << word )
+        else
+          stop = "here"
         end
       end
     end
     #@word_counts.sort # don't want to take the performance hit for large pages
-  end
-
-  # the most common word we are keeping track of
-  def most_common_word
-    if word_counts.size == 0
-      'Page not processed (or no content)'
-    else
-      word_counts.sort.to_a[0]
-    end
   end
 
   def save_everything
@@ -90,17 +83,41 @@ class Page < ActiveRecord::Base
   def least_common_word
     sz = word_counts.size
     if sz > 0
-      word_counts.sort.to_a[sz-1]
+      sort_word_counts
+      word_counts.to_a[sz-1]
     else
       nil
     end
+  end
+
+  # the most common word we are keeping track of
+  def most_common_word
+    if word_counts.size == 0
+      nil
+    else
+      sort_word_counts
+      word_counts.to_a[0]
+    end
+  end
+
+  def sort_word_counts
+    word_counts.sort!{ |y,x|
+      result = x.nil_compare y, :count
+      unless result != 0
+        result = x.nil_compare y, :word
+        unless result != 0
+          result = x <=> y
+        end
+      end
+      result
+    }
   end
 
   # deletes the least common word in the set
   # public only for testing
   def delete_least_common
     lc = least_common_word
-    self[:word_counts].delete(lc) unless lc.nil?
+    self.word_counts.delete(lc) unless lc.nil? || self.word_counts.nil?
   end
 
   private

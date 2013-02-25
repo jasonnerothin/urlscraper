@@ -8,17 +8,39 @@ class WordCount < ActiveRecord::Base
 
   # make our word counts comparable
   def self.<=>(other)
+    result = nil_compare(other, :count)
+    unless result != 0
+      if other[:count] < self[:count]
+        result = 1
+      elsif other[:count] > self[:count]
+        result = -1
+      else
+        result = 0
+      end
+      unless result != 0
+        result = nil_compare(other, :word)
+        unless result != 0
+          result = self[:word] <=> other[:word]
+        end
+      end
+    end
+    result
+  end
+
+  def nil_compare(other, attrName)
     result = 0
-    if other[:count] < self[:count]
-      result = -1
-    elsif other[:count] > self[:count]
-      result = 1
-    end
-    if result != 0
-      result
+    if self[attrName].nil?
+      unless other.any(attrName).nil?
+        result = 1
+      end
     else
-      self[:word] <=> other[:word]
+      if other.nil? || other[attrName].nil?
+        result -1
+      else
+        result = self[attrName] <=> other[attrName]
+      end
     end
+    result
   end
 
   def self.inspect
