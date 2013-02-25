@@ -21,6 +21,6 @@
 
 <fieldset>
     <legend>Word Counter Options</legend>
-    <%= button_to "Add new URL", new_page_url %><br/>
+    <%= button_to "Add new URL", new_page_url, :method=>:get %><br/>
     <%= button_to "Remove all URLs", page_annihilate_path(:page_id => 0), :method => :post, :confirm => 'Are you sure you want to delete all Page statistics?' %>
 </fieldset>

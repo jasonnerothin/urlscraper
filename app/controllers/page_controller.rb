@@ -23,19 +23,17 @@ class PageController < ApplicationController
     @page.updated_at = DateTime.now
     respond_to do |format|
       begin
-        if @page.save
-          format.html # new.html.erb
+        if @page.save(:validate => false) # want to skip url validation
+          format.html
           format.json { render :json => @page }
         else
-          format.html { render :action => :new }
+          format.html # { redirect_to root } # really should just error
           format.json { render :json => @page, :status => :unprocessable_entity }
         end
       rescue
-        x = 1
-        format.html
+        format.html # todo 500 page
       cat e
-        x = 2
-        format.html
+        format.html # todo 500 page
       end
     end
   end
@@ -93,14 +91,14 @@ class PageController < ApplicationController
     id = params[:id]
     if id.nil?
       @done = true
-      render 'page/noresult'
+      render 'page/no-result'
     end
 
     begin
       @page = Page.find id unless @done
     rescue
       @done = true
-      render 'page/noresult' unless @done
+      render 'page/no-result' unless @done
     end
     unless @done
       respond_to do |format|

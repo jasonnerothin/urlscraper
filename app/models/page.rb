@@ -15,7 +15,13 @@ class Page < ActiveRecord::Base
 
   def after_initialize
     init_word_counts
+    @url = ''
   end
+
+  validates :url, :presence => true
+  validates :url, :format => {:with => /^http:\/\/*/, :message => "URL must start with 'http://'."}
+  validates :url, :uniqueness => { :case_sensitive => false, :message => "URL %(url) has already been processed."}
+  validates_with UrlChecker
 
   # Attempt to push a new WordCount into the set.
   # This attempt is only successful if the WordCount is
@@ -59,37 +65,6 @@ class Page < ActiveRecord::Base
     end
   end
 
-  "" "def valid?
-
-    valid = true
-    return valid
-    if empty_url
-      errors.add :url, 'Non-empty URL required.'
-      valid = false
-    end
-    unless link_is_good
-      errors.add :url, 'Invalid URL (unreachable or redirect)'
-      valid = false
-    end
-    unless protocol_is_good
-      errors.add :url, 'http: is the only protocol currently supported by this application. Please start your URL with 'http://'.'
-      valid = false
-    end
-    if matching_url
-      errors.add :url, 'The web page at #self[:url] has already been processed.'
-      valid = false
-    end
-    unless json_is_good
-      errors.add :json, 'Word counts have not been serialized to json yet. Please call init_json.'
-      valid = false
-    end
-    valid
-  end
-
-  def invalid?
-    !valid?
-  end"""
-
   # returns the least common word count
   # or nil if there are no recorded words
   # yet
@@ -116,57 +91,8 @@ class Page < ActiveRecord::Base
   def map_words_on_page
     fetcher = FetchUrl.new
     processor = PageProcessor.new
-    processor.process_page(fetcher.fetch(self[:url]).body)
-  end
-
-  def json_is_good
-    my_json = self[:json]
-    if my_json.nil?
-      false
-    elsif my_json.strip.empty?
-      false
-    else
-      true
-    end
-  end
-
-  def protocol_is_good
-    url = self[:url]
-    if url.nil?
-      false
-    elsif url.strip.starts_with?("http:")
-      true
-    else
-      false
-    end
-  end
-
-  def link_is_good
-    begin
-      FetchUrl.new().check_link self[:url]
-    rescue
-      false
-    end
-  end
-
-  def matching_url
-    val = Page.find_by_url self[:url]
-    if val.nil?
-      false
-    else
-      val.any? != nil
-    end
-  end
-
-  def empty_url
-    url = self[:url]
-    if url.nil?
-      true
-    elsif url.strip.length == 0
-      true
-    else
-      false
-    end
+    page_content = fetcher.fetch(self[:url]).body
+    processor.process_page page_content
   end
 
   def init_word_counts
@@ -176,3 +102,4 @@ class Page < ActiveRecord::Base
   end
 
 end
+

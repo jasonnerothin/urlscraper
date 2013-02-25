@@ -3,12 +3,12 @@ Urlscraper::Application.routes.draw do
   root :to => "page#index"
 
   resources :page do
-    get "show"
-    get "new"
-    get "index"
-    get "noresult"
-    post "create"
-    post "annihilate"
+    get :index
+    get :show
+    get :new
+    post :create
+    get :no_result
+    post :annihilate
   end
 
   # The priority is based upon order of creation:
