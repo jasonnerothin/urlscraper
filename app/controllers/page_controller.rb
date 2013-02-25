@@ -13,7 +13,7 @@ class PageController < ApplicationController
 
   def index
     @pages = Page.all
-    render 'page/index'
+    redirect_to 'page#index'
   end
 
   # render a form with a single url on it

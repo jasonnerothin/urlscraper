@@ -9,6 +9,7 @@ Urlscraper::Application.routes.draw do
     post :create
     get :no_result
     post :annihilate
+    put :update
   end
 
   # The priority is based upon order of creation:

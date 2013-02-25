@@ -19,7 +19,7 @@
     </div>
 
     <div class="actions">
-        <%= pg.submit %>
+        <%= button_to "process webpage", page_update_url( :page_id => @page.id ), :class=>'form_submit', :onclick=>"$('form').submit(); return false;" %>
     </div>
 
 <% end %>
