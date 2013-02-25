@@ -46,34 +46,17 @@ class Page < ActiveRecord::Base
   # the most common word we are keeping track of
   def most_common_word
     if word_counts.size == 0
-      ""
+      'Page not processed (or no content)'
     else
       word_counts.sort.to_a[0]
     end
   end
 
-  # returns the least common word count
-  # or nil if there are no recorded words
-  # yet
-  def least_common_word
-    sz = word_counts.size
-    if sz > 0
-      word_counts.sort.to_a[sz-1]
-    else
-      nil
+  def process_url
+    map_words_on_page.each do |word, count|
+      wc = WordCount.new(:word=>word, :count=>count, :page_id => @page.id)
+      @page.push wc # note no save here, since we only want to keep 10
     end
-  end
-
-  # deletes the least common word in the set
-  def delete_least_common
-    lc = least_common_word
-    @word_counts.delete(lc) unless lc.nil?
-  end
-
-  def from_json(json_str)
-    @url = json_str[:url]
-    @id = json_str[:id]
-    @word_counts = json_str[:word_counts]
   end
 
   "" "def valid?
@@ -105,9 +88,36 @@ class Page < ActiveRecord::Base
 
   def invalid?
     !valid?
-  end" ""
+  end"""
+
+  # returns the least common word count
+  # or nil if there are no recorded words
+  # yet
+  # public only for testing
+  def least_common_word
+    sz = word_counts.size
+    if sz > 0
+      word_counts.sort.to_a[sz-1]
+    else
+      nil
+    end
+  end
+
+  # deletes the least common word in the set
+  # public only for testing
+  def delete_least_common
+    lc = least_common_word
+    @word_counts.delete(lc) unless lc.nil?
+  end
 
   private
+
+  # returns a map from word to count
+  def map_words_on_page
+    fetcher = FetchUrl.new
+    processor = PageProcessor.new
+    processor.process_page(fetcher.fetch(self[:url]).body)
+  end
 
   def json_is_good
     my_json = self[:json]

@@ -1,18 +1,5 @@
-<!DOCTYPE html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
-<head>
-    <title>Url Word Counter</title>
-    <%= stylesheet_link_tag "page", :media => "all" %>
-    <%= javascript_include_tag "page" %>
-    <%= csrf_meta_tags %>
-</head>
-<body>
-
-<h2>Url Word Counter</h2>
-<%= link_to "Add new URL", :controller => :page, :action => :new %>
-
-</body>
-</html>
+<fieldset>
+    <legend>Url Word Counter</legend>
+    <%= link_to "Add new URL", :controller => :page, :action => :new %>
+    <!-- %= link_to "Remove all URLs", :controller => :page, :action => :annihilate, :page_id => nil % -->
+</fieldset>

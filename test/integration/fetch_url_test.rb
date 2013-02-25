@@ -6,26 +6,26 @@ class FetchUrlTest < Test::Unit::TestCase
   def setup
     @url = "http://jasonnerothin.com/app/index.html"
 
-    @instance = FetchUrl.new()
+    @instance = FetchUrl.new
   end
 
   def test_fetch
-    aLink = "https://github.com/jasonnerothin/angular-phonecat"
+    a_link = "https://github.com/jasonnerothin/angular-phonecat"
 
-    actual = @instance.fetch(@url)
+    actual = @instance.fetch @url
 
-    assert( actual.body.index(aLink) > 0, "The github link #{aLink} should be embedded in the source of #{@url}." )
+    assert( actual.body.index(a_link) > 0, "The github link #{a_link} should be embedded in the source of #@url." )
   end
 
   def test_check_link
 
-    aLinkThatRedirects = "http://jasonnerothin.com"
-    actual = @instance.check_link aLinkThatRedirects
+    a_link_that_redirects = "http://jasonnerothin.com"
+    actual = @instance.check_link a_link_that_redirects
     assert_not_nil actual
     assert_equal false, actual
 
-    aLink = "http://news.google.com"
-    actual2 = @instance.check_link aLink
+    a_link = "http://news.google.com"
+    actual2 = @instance.check_link a_link
     assert_not_nil actual2
     assert_equal true, actual2
 

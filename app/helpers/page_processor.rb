@@ -45,16 +45,16 @@ class PageProcessor
   # returns a map of the word count for each word on the page
   def process_page(page_source)
     raise("Error: empty page source!") if page_source.nil? || page_source.empty?
-    map = nil
+    word_map = nil
     tokenize(page_source).each do |word|
-      map = {word => 1} if map.nil?
-      if map.has_key? word
-        map[word] = map[word] + 1
+      word_map = {word => 1} if word_map.nil?
+      if word_map.has_key? word
+        word_map[word] = word_map[word] + 1
       else
-        map[word] = 1
+        word_map[word] = 1
       end
     end
-    map
+    word_map
   end
 
 end

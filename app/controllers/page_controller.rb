@@ -2,19 +2,23 @@ class PageController < ApplicationController
 
   #protect_from_forgery
 
+  # wipe out to start from scratch
+  def annihilate
+    @pages = Page.all
+    @pages.each do |pg|
+      pg.destroy
+    end
+    render 'page/all-gone'
+  end
+
   def index
     @pages = Page.all
-    #@pages.each do |pg|
-    #  pg.destroy
-    #end
     render 'page/index'
   end
 
   # render a form with a single url on it
   def new
-    @page = Page.new()
-    @page[:url] = "http://news.google.com" # temp
-    @page.init
+    @page = Page.new
     @page.created_at = DateTime.now
     @page.updated_at = DateTime.now
     respond_to do |format|
@@ -42,14 +46,11 @@ class PageController < ApplicationController
 
     @page = Page.find params[:page][:id]
     @page.url = params[:page][:url]
-    word_count(@page).each do |word, count|
-      wc = WordCount.new(word, count)
-      @page.push wc
-    end
+    @page.process_url
 
     respond_to do |format|
       begin
-        if @page.update!
+        if save_page @page # we save off the word counts in this method
           format.html { redirect_to(@page, :notice => 'Page successfully created.') }
           format.json { render :json => @page, :status => :created, :location => @page }
         else
@@ -64,10 +65,23 @@ class PageController < ApplicationController
 
   end
 
-  def word_count(page)
-    fetcher = FetchUrl.new
-    processor = PageProcessor.new
-    processor.process_page(fetcher.fetch(page[:url]).body)
+  def save_page(page)
+    success = true
+    now = DateTime.now
+    @page.updated_at = now
+    if @page.update
+      @page.word_counts.each do | wc |
+        wc[:page_id] = @page.id
+        wc[:created_at] = now
+        wc[:updated_at] = now
+        unless wc.save
+          success = false
+        end
+      end
+    else
+      success = false
+    end
+    success
   end
 
   # show details about a single page, or

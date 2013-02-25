@@ -65,14 +65,14 @@ class PageProcessorTest < Test::Unit::TestCase
               20 Moreover the law entered, that the offence might abound. But where sin abounded, grace did much more abound:
               21 That as sin hath reigned unto death, even so might grace reign through righteousness unto eternal life by Jesus Christ our Lord."""
 
-    actual = @instance.process_page(romans5)
+    actual = @instance.process_page romans5
 
     assert_equal(190, actual.size)
 
-    assert_equal(actual["justification"], 2)
-    assert_equal(actual["hope"], 3)
-    assert_equal(actual["were"], 5)
-    assert_equal(actual["condemnation"], 1)
+    assert_equal actual["justification"], 2
+    assert_equal actual["hope"], 3
+    assert_equal actual["were"], 5
+    assert_equal actual["condemnation"], 1
 
   end
 
