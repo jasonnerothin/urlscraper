@@ -6,15 +6,6 @@ class WordCount < ActiveRecord::Base
 
   belongs_to :page
 
-  #def initialize(word, count, page_id)
-  #  raise("Word and count are required attributes of a WordCount object.") if word.nil? || count.nil?
-  #  raise("Count must be greater than zero.") unless count > 0
-  #  raise("page_id is required.") unless count > 0
-  #  @word = word
-  #  @count = count
-  #  @page_id = page_id
-  #end
-
   # make our word counts comparable
   def <=>(other)
     result = 0
