@@ -10,13 +10,17 @@
         </tr>
     </thead>
     <tbody>
-<% @pages.each do |pg| %>
+<% @pages.each do |pg|
+    if pg.valid?
+%>
         <tr>
             <td><%= link_to pg.url, pg.url, :remote=>true, :popup => true %></td>
             <td><%= pg.most_common_word.word %></td>
             <td><%= pg.most_common_word.count %></td>
         </tr>
-<% end %>
+<% end
+   end
+%>
     </tbody>
 </table>
 <% end %>
