@@ -31,10 +31,10 @@ class Page < ActiveRecord::Base
   # less common words will crowd each other out. And
   # the uncommon words are implicitly the ones we're
   # disinterested in.
+  #
+  # todo push these onto a real stack (field that's not part of the ActiveRecord)
+  # todo to minimize on db problems...
   def push(word)
-    #if self.word_counts.size == 10
-    #  x = 23
-    #els
     if self.word_counts.size < 10
       self.word_counts = ( self.word_counts << word )
     else # 10 words already
@@ -42,12 +42,10 @@ class Page < ActiveRecord::Base
         if word[:count] > least_common_word[:count]
           delete_least_common
           self.word_counts = ( self.word_counts << word )
-        else
-          stop = "here"
         end
       end
     end
-    #@word_counts.sort # don't want to take the performance hit for large pages
+    # @word_counts.sort <- don't want to take the performance hit for large pages
   end
 
   # returns the least common word count
@@ -84,8 +82,8 @@ class Page < ActiveRecord::Base
   # saves the page down and then
   # pulls info from the url to fill up with
   def save_then_process!
-    self.save!
-    self.process_url
+    save!
+    process_url
   end
 
   private
@@ -115,7 +113,8 @@ class Page < ActiveRecord::Base
   # pull information back from the url and
   # calculate the 10 most common words
   def process_url
-    map_words_on_page.each do |word, count|
+    map = map_words_on_page
+    map.each do |word, count|
       wc = WordCount.new(:word=>word, :count=>count, :page_id => object_id)
       push wc # todo pull the push/stack functionality out of Page to minimize db calls
     end

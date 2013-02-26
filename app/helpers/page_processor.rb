@@ -4,7 +4,7 @@
 class PageProcessor
 
   def initialize
-    @delimiters = %W{. \n \t / \\ : ; , ? - ~ ( ) [ ] { } " _ = + ^ % $ @ ! 1 2 3 4 5 6 7 8 9 0}
+    @delimiters = %W{. \n \t / \\ : ; , ? - ~ < > & ( ) [ ] { } " _ = + ^ % $ @ ! 1 2 3 4 5 6 7 8 9 0}
   end
 
   # replaces common delimiters with single spaces
