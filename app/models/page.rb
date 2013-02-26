@@ -93,7 +93,7 @@ class Page < ActiveRecord::Base
   # the most common word we are keeping track of
   def most_common_word
     if word_counts.size == 0
-      nil
+      WordCount.new(:word=>'n/a',:count=>0)
     else
       sort_word_counts
       word_counts.to_a[0]

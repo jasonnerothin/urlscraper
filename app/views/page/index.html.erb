@@ -1,5 +1,5 @@
 <div id="index_main">
-<% unless !@pages.nil? && !@pages.empty? %>
+<% unless @pages.nil? || @pages.empty? %>
 <table border="1">
     <caption>Word Counter Stats</caption>
     <thead>
@@ -12,9 +12,9 @@
     <tbody>
 <% @pages.each do |pg| %>
         <tr>
-            <td><%= link_to pg[:url], pg[:url], :remote=>true, :popup => true %></td>
-            <td><%= pg.most_common_word[:word] %></td>
-            <td><%= pg.most_common_word[:count] %></td>
+            <td><%= link_to pg.url, pg.url, :remote=>true, :popup => true %></td>
+            <td><%= pg.most_common_word.word %></td>
+            <td><%= pg.most_common_word.count %></td>
         </tr>
 <% end %>
     </tbody>
