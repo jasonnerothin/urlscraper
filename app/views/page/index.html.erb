@@ -10,16 +10,22 @@
         </tr>
     </thead>
     <tbody>
-<% @pages.each do |pg|
-    if pg.valid?
+<%
+    cnt = 0
+    @pages.each do |pg|
+        if pg.valid?
+
 %>
+
         <tr>
-            <td><%= link_to pg.url, pg.url, :remote=>true, :popup => true %></td>
+            <td><%= link_to pg.url, pg.url, :popup =>['win%(cnt)', 'height=600, width=600'] %></td>
             <td><%= pg.most_common_word.word %></td>
             <td><%= pg.most_common_word.count %></td>
         </tr>
-<% end
-   end
+
+<%      cnt = cnt + 1
+        end
+    end
 %>
     </tbody>
 </table>
