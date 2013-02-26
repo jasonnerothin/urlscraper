@@ -17,7 +17,7 @@ class PageProcessorTest < Test::Unit::TestCase
 
   def test_replace_tags
 
-    str = "<xml>fun<x>as</x><y><z>a </z><w>barrel </w></y>full of monkeys</xml>"
+    str = "<xml>fun<x> as</x> <y><z>a </z><w>barrel </w></y>full of monkeys</xml>"
 
     actual = @instance.replace_tags str
 
@@ -27,7 +27,7 @@ class PageProcessorTest < Test::Unit::TestCase
 
   def test_tokenize
 
-    str = "<xml>fun<x>as</x><y><z>a~</z><w> barrel!</w></y>full%of$monkeys</xml>"
+    str = "<xml>fun <x>as </x> <y><z>a~</z><w> barrel!</w></y>full%of$monkeys</xml>"
 
     actual = @instance.tokenize str
 
@@ -67,12 +67,12 @@ class PageProcessorTest < Test::Unit::TestCase
 
     actual = @instance.process_page romans5
 
-    assert_equal(190, actual.size)
+    assert_equal(168, actual.size)
 
     assert_equal actual["justification"], 2
     assert_equal actual["hope"], 3
     assert_equal actual["were"], 5
-    assert_equal actual["condemnation"], 1
+    assert_equal actual["condemnation"], 2
 
   end
 

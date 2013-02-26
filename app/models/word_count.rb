@@ -6,6 +6,7 @@ class WordCount < ActiveRecord::Base
 
   belongs_to :page
 
+  # todo delete when you prove that it's not used anyway...
   # make our word counts comparable
   def self.<=>(other)
     result = nil_compare(other, :count)
@@ -27,6 +28,11 @@ class WordCount < ActiveRecord::Base
     result
   end
 
+  def self.inspect
+    'word: #@word, count: #@count, page_id: #@page_id'
+  end
+
+  # todo this should be in its own Module or class
   def nil_compare(other, attrName)
     result = 0
     if self[attrName].nil?
@@ -41,10 +47,6 @@ class WordCount < ActiveRecord::Base
       end
     end
     result
-  end
-
-  def self.inspect
-    'word: #@word, count: #@count, page_id: #@page_id'
   end
 
 end
