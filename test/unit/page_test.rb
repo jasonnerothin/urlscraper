@@ -91,6 +91,8 @@ class PageTest < ActiveSupport::TestCase
     !has_error page, msg
   end
 
+  # todo this method seems to run into another one (probably through @instance)
+  # todo when tests are run in parallel (All tests in: test). Fix this problem.
   def test_push
 
     @instance.push @w0
