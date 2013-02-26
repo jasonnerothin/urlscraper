@@ -63,20 +63,12 @@ class PageController < ApplicationController
   #show details about a single page, or
   #redirect to an error page if necessary
   def show
-    #success = false
     id = params[:page_id]
+    id ||= @_params[:id]
     @page = Page.find id
-    WordCount.find_all_by_page_id(id).each do |wc|
-      @page.push wc
-    end
-    success = true
-    if success && !id.nil?
-      respond_to do |format|
-        format.html # render 'page/show/?id=' + id
-        format.json { render :json => @page, :status => :ok, :location => @page }
-      end
-    else
-      render 'page/no-result'
+    respond_to do |format|
+      format.html # render 'page/show/?id=' + id
+      format.json { render :json => @page, :status => :ok, :location => @page }
     end
   end
 
