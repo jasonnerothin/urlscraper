@@ -82,8 +82,16 @@ class Page < ActiveRecord::Base
   # saves the page down and then
   # pulls info from the url to fill up with
   def save_then_process!
-    save!
-    process_url
+    success = false
+    begin
+      if save!
+         success = true
+      end
+    rescue
+      success = false
+    end
+    process_url if success
+    success
   end
 
   private

@@ -60,3 +60,47 @@ h3{
   float:left;
   clear:both;
 }
+
+.fl{
+  float:left;
+}
+.cb{
+  clear:both;
+}
+
+div#error_explanation h5{
+  font-weight: bold;
+  color: red;
+}
+
+div#url_entry{
+  font-weight: bold;
+  float:left;
+  clear:left;
+}
+div#url_entry label{
+  float:left;
+  clear:left;
+  width:50px;
+}
+div#url_entry input{
+  float:left;
+  clear:right;
+}
+div.field_with_errors{
+  float:left;
+}
+div.field_with_errors label{
+  float:left;
+  color: red;
+  font-weight: bold;
+  width:75px;
+  padding-top:3px;
+  padding-left:1.5em;
+}
+div.field_with_errors input{
+  float:left;
+  color: red;
+  font-weight: bold;
+  background-color: #ffeeee;
+}

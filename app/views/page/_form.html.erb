@@ -1,21 +1,20 @@
 <%= form_for @page do |pg| %>
 
     <% if @page.errors.any? %>
-    <div id="errorExplanation">
-        <h2>< %= pluralize(@page.errors.count, "error") %> prohibited the URL from being scraped.</h2>
-        <ul>
+    <div id="error_explanation">
+        <h5><%= pluralize(@page.errors.count, "error") %> prohibited the webpage from being processed.</h5>
+        <ol>
         <% @page.errors.full_messages.each do |msg| %>
             <li><%= msg %></li>
         <% end %>
-        </ul>
+        </ol>
     </div>
     <% end %>
 
     <%= pg.hidden_field :id %>
 
     <div class="url_entry">
-        <%= pg.label :url, 'URL' %><br/>
-        <%= pg.text_field :url, :size => 125 %>
+        <%= pg.label :url, 'URL' %><%= pg.text_field :url, :size => 125 %>
     </div>
 
     <div class="actions">

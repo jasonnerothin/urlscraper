@@ -29,19 +29,18 @@ class PageController < ApplicationController
     @page = Page.new
     @page.created_at = DateTime.now
     @page.updated_at = DateTime.now
-    @page[:url] = 'http://' # save the user the hassle
+    @page[:url] = 'http://' unless !@page[:url].nil? || @page[:url].empty? # save the user the hassle
     respond_to do |format|
       begin
         if @page.save(:validate => false) # want to skip url validation
           format.html
           format.json { render :json => @page }
         else
-          format.html # { redirect_to root } # really should just error
-          format.json { render :json => @page, :status => :unprocessable_entity }
+          not_found # todo change to 500 analog of this method
         end
       rescue
         format.html # todo 500 page
-        cat e
+      cat e
         format.html # todo 500 page
       end
     end
@@ -52,8 +51,11 @@ class PageController < ApplicationController
   def update
     @page = Page.find params[:page][:id]
     @page.url = params[:page][:url]
-    @page.save_then_process!
-    redirect_to page_show_url(:page_id => @page.id)
+    if @page.save_then_process!
+      redirect_to page_show_url(:page_id => @page.id)
+    else
+      render :new
+    end
   end
 
   def not_found

@@ -32,12 +32,8 @@ processor are hitting the database. Big enough pages (news.google) cause 500s wh
 tall). But little static pages go just fine. The main cost is just that we spin through a lot of ids on the
 WordCount objects.
 
-Let's see, anything else? Oh, cripes - I forgot to properly hook in dynamic form validation. The validations are
-all written and tested, but I just didn't follow through with adding the gems. Maybe I'll do that before you
-get around to reading this doc.
-
-And then of course, I didn't go all script-crazy. I tried to leave an easter egg in the css, but it doesn't
+Let's see, anything else? I didn't go all script-crazy. I tried to leave an easter egg in the css, but it doesn't
 render on Safari. (It's a long-ago deprecated feature of HTML 3 that I sort of miss.) Almost as much as MIDI and
 animated gifs...
 
-Okay, that's it. See you in a while.
+Okay, that's it. See you in a bit.
