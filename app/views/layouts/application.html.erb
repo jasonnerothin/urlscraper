@@ -6,15 +6,19 @@
 <head>
     <title>Url Word Counter</title>
     <%= stylesheet_link_tag :page, :media => "all" %>
+    <%= stylesheet_link_tag 'bootstrap.min', :media => "all" %>
     <%= javascript_include_tag :application %>
     <%= csrf_meta_tags %>
 </head>
 <body>
+<div id="title"><span class="hearts">&#9825;</span>&nbsp;Webpage word counter app&nbsp;<span class="hearts">&#9825;</span></div>
 
 <%= yield %>
 
 <div id="nav">
-    <%= link_to "Main", root_url %>
+    <%= link_to "Index", root_url, :class => 'btn-info' %>
+    <%= link_to "New URL", new_page_url, :method=>:get, :class => 'btn-info' %>
+    <%= link_to "Remove URLs", page_annihilate_path(:page_id => 0), :method => :post, :class => 'btn-info', :confirm => 'Are you sure you want to permanently delete <i>all</i> webpage statistics?' %>
 </div>
 </body>
 </html>

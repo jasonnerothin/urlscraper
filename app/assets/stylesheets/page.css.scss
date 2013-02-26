@@ -1,3 +1,37 @@
 // Place all the styles related to the page controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+/* layout */
+body{
+  margin: 1.5em 0;
+  padding:1.5em 5%;
+  background-color: #eeeeee;
+}
+div#title{
+  float:left;
+  clear:both;
+  text-align: center;
+  width:90%;
+  padding:.4em 0;
+  border:1px solid #dedede;
+}
+span.hearts{
+  color:red;
+  text-decoration: blink;
+  margin:0 5%;
+}
+div#nav{
+  float:left;
+  clear:left;
+  margin-top:.75em;
+  margin-left:2.5em;
+}
+div#nav a.btn-info{
+  padding:0.25em 0.75em;
+}
+
+/* index */
+div#index_main{
+  height:600px;
+  width:90%;
+}
