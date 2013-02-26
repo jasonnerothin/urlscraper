@@ -52,7 +52,7 @@ class PageController < ApplicationController
     @page.url = params[:page][:url]
     @page.save!
     @page.process_url
-    render :show
+    redirect_to page_show_url(:page_id => @page.id)
   end
 
   def not_found
