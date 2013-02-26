@@ -50,34 +50,6 @@ class Page < ActiveRecord::Base
     #@word_counts.sort # don't want to take the performance hit for large pages
   end
 
-  def save_everything
-    success = true
-    now = DateTime.now
-    self[:updated_at] = now
-    if self.update
-      word_counts.each do | wc |
-        wc[:page_id] = page.id
-        wc[:created_at] = now
-        wc[:updated_at] = now
-        unless wc.save
-          success = false
-        end
-      end unless word_counts.nil?
-    else
-      success = false
-    end
-    success
-  end
-
-  # pull information back from the url and
-  # calculate the 10 most common words
-  def process_url
-    map_words_on_page.each do |word, count|
-      wc = WordCount.new(:word=>word, :count=>count, :page_id => object_id)
-      push wc # todo pull the push/stack functionality out of Page to minimize db calls
-    end
-  end
-
   # returns the least common word count
   # or nil if there are no recorded words
   # yet
@@ -109,6 +81,13 @@ class Page < ActiveRecord::Base
     self.word_counts.delete(lc) unless lc.nil? || self.word_counts.nil?
   end
 
+  # saves the page down and then
+  # pulls info from the url to fill up with
+  def save_then_process!
+    self.save!
+    self.process_url
+  end
+
   private
 
   # returns a map from word to count
@@ -133,5 +112,33 @@ class Page < ActiveRecord::Base
     }
   end
 
-end
+  # pull information back from the url and
+  # calculate the 10 most common words
+  def process_url
+    map_words_on_page.each do |word, count|
+      wc = WordCount.new(:word=>word, :count=>count, :page_id => object_id)
+      push wc # todo pull the push/stack functionality out of Page to minimize db calls
+    end
+  end
 
+  # deprecated
+  def save_everything
+    success = true
+    now = DateTime.now
+    self[:updated_at] = now
+    if self.update
+      word_counts.each do | wc |
+        wc[:page_id] = page.id
+        wc[:created_at] = now
+        wc[:updated_at] = now
+        unless wc.save
+          success = false
+        end
+      end unless word_counts.nil?
+    else
+      success = false
+    end
+    success
+  end
+
+end

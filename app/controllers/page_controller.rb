@@ -52,8 +52,7 @@ class PageController < ApplicationController
   def update
     @page = Page.find params[:page][:id]
     @page.url = params[:page][:url]
-    @page.save!
-    @page.process_url
+    @page.save_then_process!
     redirect_to page_show_url(:page_id => @page.id)
   end
 
