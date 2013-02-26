@@ -69,10 +69,12 @@ class Page < ActiveRecord::Base
     success
   end
 
+  # pull information back from the url and
+  # calculate the 10 most common words
   def process_url
     map_words_on_page.each do |word, count|
       wc = WordCount.new(:word=>word, :count=>count, :page_id => object_id)
-      push wc # note no save here, since we only want to keep 10
+      push wc # todo pull the push/stack functionality out of Page to minimize db calls
     end
   end
 
@@ -100,19 +102,6 @@ class Page < ActiveRecord::Base
     end
   end
 
-  def sort_word_counts
-    word_counts.sort!{ |y,x|
-      result = x.nil_compare y, :count
-      unless result != 0
-        result = x.nil_compare y, :word
-        unless result != 0
-          result = x <=> y
-        end
-      end
-      result
-    }
-  end
-
   # deletes the least common word in the set
   # public only for testing
   def delete_least_common
@@ -129,6 +118,19 @@ class Page < ActiveRecord::Base
 
     processor = PageProcessor.new
     processor.process_page page_content
+  end
+
+  def sort_word_counts
+    word_counts.sort!{ |y,x|
+      result = x.nil_compare y, :count
+      unless result != 0
+        result = x.nil_compare y, :word
+        unless result != 0
+          result = x <=> y
+        end
+      end
+      result
+    }
   end
 
 end

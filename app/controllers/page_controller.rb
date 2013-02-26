@@ -16,6 +16,8 @@ class PageController < ApplicationController
   end
 
   def index
+    clean_up_invalid_pages
+    clean_up_invalid_word_counts
     @pages = Page.all
     respond_to do |format|
       format.html
@@ -36,12 +38,12 @@ class PageController < ApplicationController
         else
           format.html # { redirect_to root } # really should just error
           format.json { render :json => @page, :status => :unprocessable_entity }
-    end
+        end
       rescue
         format.html # todo 500 page
-      cat e
+        cat e
         format.html # todo 500 page
-  end
+      end
     end
   end
 
@@ -76,6 +78,29 @@ class PageController < ApplicationController
       end
     else
       render 'page/no-result'
+    end
+  end
+
+  private
+
+  # happens when people migrate away from the page/new form without submitting
+  def clean_up_invalid_pages
+    all = Page.all
+    unless all.nil? || all.empty?
+      all.each do |pg|
+        unless pg.valid?
+          pg.destroy
+        end
+      end
+    end
+  end
+
+  def clean_up_invalid_word_counts
+    all = WordCount.find_all_by_page_id(nil)
+    unless all.nil? || all.empty?
+      all.each do |wc|
+        wc.destroy
+      end
     end
   end
 
