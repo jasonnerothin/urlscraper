@@ -3,35 +3,56 @@
 // You can use Sass (SCSS) here: http://sass-lang.com/
 /* layout */
 body{
-  margin: 1.5em 0;
-  padding:1.5em 5%;
-  background-color: #eeeeee;
+  margin: 0 2.5%;
+  padding: 1.5em 5%;
+  background-color: #888888;
+}
+div#main{
+  float: left;
+  clear: both;
+  background-color: #ffffff;
+  width: 95%;
+  height: 100%;
 }
 div#title{
-  float:left;
-  clear:both;
+  float: left;
+  clear: both;
   text-align: center;
-  width:90%;
-  padding:.4em 0;
-  border:1px solid #dedede;
+  width: 85%;
+  padding: .4em 0;
+  border: 1px solid #dedede;
 }
 span.hearts{
-  color:red;
+  color: red;
   text-decoration: blink;
-  margin:0 5%;
+  margin: 0 5%;
 }
 div#nav{
-  float:left;
-  clear:left;
-  margin-top:.75em;
-  margin-left:2.5em;
+  float: left;
+  clear: left;
+  margin-top: .75em;
+  margin-left: 2.5em;
 }
 div#nav a.btn-info{
-  padding:0.25em 0.75em;
+  padding: 0.25em 0.75em;
 }
 
 /* index */
 div#index_main{
-  height:600px;
-  width:90%;
+
+  width: 85%;
+  padding: 3% 0;
+}
+
+table tr th,td{
+  padding: 0 1em;
+}
+table tr th{
+  color:rgba(255,255,255,1);
+  background-color:#64aeca;
+}
+
+table caption{
+  padding:0.25em 0;
+  font-weight: bold;
 }
